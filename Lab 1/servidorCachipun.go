@@ -14,8 +14,6 @@ func mensaje_bienvenida() {
 
 func main() {
 	go mensaje_bienvenida()
-	fmt.Print(rand.Intn(100), ",")
-
 	PUERTO := ":50003" //socket 50000 al 50020
 	BUFFER := 1024
 	s, err := net.ResolveUDPAddr("udp4", PUERTO)
@@ -39,6 +37,7 @@ func main() {
 
 		if strings.TrimSpace(string(buffer[0:n])) == "STOP" {
 			fmt.Println("Exiting UDP server!")
+			_, err = connection.WriteToUDP([]byte("muere cachipun"), addr)
 			return
 		}
 		RandomIntegerwithinRange := rand.Intn(9)

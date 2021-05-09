@@ -6,13 +6,13 @@ socketCliente = skt.socket(skt.AF_INET, skt.SOCK_STREAM) #Sockstream = TCP
 
 
 socketCliente.connect((serverAddr,puertoServidor)) #Cliente realiza el Handshake
-mensajeInicio = '¿Quieres jugar cachipun?\n'
+mensajeInicio = input('Ingrese una opcion:\n 0) Salir\n1) Jugar')
 
 while(1):
     socketCliente.send(mensajeInicio.encode())
     response = socketCliente.recv(2048).decode()
-    if response == 'chupala':
-        socketCliente.send('para'.encode())
+    if response == '0':
+        print("Cliente apagado")
         break
     print(response)
 
