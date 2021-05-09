@@ -40,10 +40,13 @@ func main() {
 			_, err = connection.WriteToUDP([]byte("muere cachipun"), addr)
 			return
 		}
-		RandomIntegerwithinRange := rand.Intn(9)
+		RandomIntegerwithinRange := rand.Intn(10)
+		fmt.Println(strconv.Itoa(RandomIntegerwithinRange) + "\n")
+		if strings.TrimSpace(string(buffer[0:n])) == "Tira tu jugada" {
+			RandomIntegerwithinRange = rand.Intn(3) + 1
+		}
 
 		mensaje := []byte(strconv.Itoa(RandomIntegerwithinRange))
-		fmt.Println("mensaje es " + string(mensaje))
 		_, err = connection.WriteToUDP(mensaje, addr)
 		if err != nil {
 			fmt.Println(err)
