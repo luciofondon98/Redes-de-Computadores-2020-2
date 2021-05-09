@@ -6,6 +6,7 @@ import (
 	"net"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func mensaje_bienvenida() {
@@ -13,6 +14,7 @@ func mensaje_bienvenida() {
 }
 
 func main() {
+	rand.Seed(time.Now().UTC().UnixNano())
 	go mensaje_bienvenida()
 	PUERTO := ":50003" //socket 50000 al 50020
 	BUFFER := 1024
@@ -31,7 +33,7 @@ func main() {
 
 	for {
 		n, addr, err := connection.ReadFromUDP(buffer)
-		fmt.Print(addr, err)
+		//fmt.Print(addr, err) esto printea el IP address y si hay error
 		fmt.Print("\n")
 		fmt.Print("-> " + string(buffer[0:n]) + "\n")
 
@@ -40,10 +42,12 @@ func main() {
 			_, err = connection.WriteToUDP([]byte("muere cachipun"), addr)
 			return
 		}
-		RandomIntegerwithinRange := rand.Intn(10)
-		fmt.Println(strconv.Itoa(RandomIntegerwithinRange) + "\n")
+		RandomIntegerwithinRange := rand.Intn(10) //problema con el random, tal vez falta semilla
+		fmt.Println(strconv.Itoa(RandomIntegerwithinRange))
 		if strings.TrimSpace(string(buffer[0:n])) == "Tira tu jugada" {
 			RandomIntegerwithinRange = rand.Intn(3) + 1
+			fmt.Print("Esta es la jugada papucho\n")
+			fmt.Println(strconv.Itoa(RandomIntegerwithinRange))
 		}
 
 		mensaje := []byte(strconv.Itoa(RandomIntegerwithinRange))

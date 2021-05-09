@@ -29,7 +29,10 @@ def solicitarJugar():
     print("Solicitando a servidor cachipun jugar una partida")
     cachipunSocket.sendto('Oye wn, quieren jugar, queri?'.encode(), (serverAddr, serverPort))
     respuestaCachipun, addr = cachipunSocket.recvfrom(2048)
-    return respuestaCachipun.decode()
+    if (respuestaCachipun.decode() == "0"): #cachipun no quiere jugar
+        return "No"
+    else: #desde [1-9] 90% de jugar
+        return "Si"
 
 def solicitarJugadaACachipun():
     cachipunSocket.sendto('Tira tu jugada'.encode(), (serverAddr, serverPort))
@@ -40,39 +43,47 @@ def jugarCachipun():
     puntaje_cliente = 0
     puntaje_cachipun = 0
     ganador = ""
-    while puntaje_cliente != 3 or puntaje_cachipun != 3:
+    while (1):
 
-        jugada_cliente = clientSocket.recv(2048).decode() #decodifica mensaje, ya que viene en bytes
-        jugada_cachipun = solicitarJugadaACachipun()
+        jugada_cliente = int(clientSocket.recv(2048).decode()) #decodifica mensaje, ya que viene en bytes
+        jugada_cachipun = int(solicitarJugadaACachipun())
         mensaje = ""
         if jugada_cliente == jugada_cachipun: #empate
             mensaje = "Empate"
         elif jugada_cliente%3 == (jugada_cachipun+1)%3: #cliente pierde      
             puntaje_cachipun+=1
-            mensaje = "Servidor cachipun ganó, la cuenta va: Cliente -> " + str(puntaje_cliente) + "Servidor Cachipun" + str(puntaje_cachipun)
-        elif (jugada_cliente+1)%3 == jugada_cachipun: #cliente gana
+            if (puntaje_cachipun == 3):
+                mensaje = "Perdiste, ganó cachipun: Cliente -> " + str(puntaje_cliente) + " Servidor Cachipun " + str(puntaje_cachipun)
+                clientSocket.send(mensaje.encode())
+                break
+            mensaje = "Servidor cachipun ganó, la cuenta va: Cliente -> " + str(puntaje_cliente) + " Servidor Cachipun " + str(puntaje_cachipun)
+        elif (jugada_cliente+1)%3 == jugada_cachipun%3: #cliente gana
             puntaje_cliente+=1
-            mensaje = "Ganaste, la cuenta va: Cliente -> " + str(puntaje_cliente) + "Servidor Cachipun" + str(puntaje_cachipun)
+            if (puntaje_cliente == 3):
+                mensaje = "Ganaste la ronda Cliente -> " + str(puntaje_cliente) + " Servidor Cachipun " + str(puntaje_cachipun) 
+                clientSocket.send(mensaje.encode())
+                break
+            mensaje = "Ganaste, la cuenta va: Cliente -> " + str(puntaje_cliente) + " Servidor Cachipun " + str(puntaje_cachipun)
 
         clientSocket.send(mensaje.encode())
-
     if puntaje_cachipun == 3:
         return "Gano cachipun"
     else:
         return "Gano cliente"
 
 
-while(1): #comienza programa
+while(1): #comienza programa escuchando al cliente
     msg = clientSocket.recv(2048).decode() #decodifica mensaje, ya que viene en bytes
     print(msg)
-    if msg == '0':
+    if msg == '0': #cliente quiere salir
         terminarPrograma()
         break
-    elif msg == '1':
-        if solicitarJugar() == 'No':
+    elif msg == '1':  #cliente quiere jugar
+        solicitud = solicitarJugar()
+        if solicitud == 'No':
             terminarPrograma()
             break
-        elif solicitarJugar() == 'Si':
+        elif solicitud == 'Si':
             clientSocket.send('1'.encode())
             ganador = jugarCachipun()
             clientSocket.send(ganador.encode())
