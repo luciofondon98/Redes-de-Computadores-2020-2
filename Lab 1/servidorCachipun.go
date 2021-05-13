@@ -33,7 +33,6 @@ func main() {
 
 	for {
 		n, addr, err := connection.ReadFromUDP(buffer)
-		//fmt.Print(addr, err) esto printea el IP address y si hay error
 		fmt.Print("\n")
 		fmt.Print("-> " + string(buffer[0:n]) + "\n")
 
@@ -42,10 +41,10 @@ func main() {
 			_, err = connection.WriteToUDP([]byte("muere cachipun"), addr)
 			return
 		}
-		RandomIntegerwithinRange := rand.Intn(10) //problema con el random, tal vez falta semilla
-		fmt.Println(strconv.Itoa(RandomIntegerwithinRange))
+		RandomIntegerwithinRange := rand.Intn(10)
 
 		if RandomIntegerwithinRange != 0 { // si cachipun quiere jugar una partida
+			fmt.Println("Ya! Juguemos un cachipun.")
 			PUERTO_ALEATORIO := 52000 + rand.Intn(110)
 			fmt.Println("Puerto nuevo para el juego es: " + strconv.Itoa(PUERTO_ALEATORIO))
 			mensaje_con_puerto_nuevo := []byte(strconv.Itoa(PUERTO_ALEATORIO))
@@ -70,7 +69,6 @@ func main() {
 
 			for {
 				n, addr, err := connection.ReadFromUDP(buffer)
-				//fmt.Print(addr, err) esto printea el IP address y si hay error
 				fmt.Print("\n")
 				fmt.Print("-> " + string(buffer[0:n]) + "\n")
 
@@ -82,7 +80,6 @@ func main() {
 
 				RandomIntegerwithinRange = rand.Intn(3) + 1
 				fmt.Print("La opción del servidor cachipun es: " + strconv.Itoa(RandomIntegerwithinRange) + "\n")
-				fmt.Println(strconv.Itoa(RandomIntegerwithinRange))
 
 				mensaje := []byte(strconv.Itoa(RandomIntegerwithinRange))
 				_, err = connection.WriteToUDP(mensaje, addr)

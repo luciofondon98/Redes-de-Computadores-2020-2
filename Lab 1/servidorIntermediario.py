@@ -1,6 +1,5 @@
 import socket as skt
 
-
 #-----------------CONEXION TCP CON CLIENTE---------------------------------------#
 serverPort = 52457 #49152-65535
 serverSocket = skt.socket(skt.AF_INET, skt.SOCK_STREAM) #primer prámetro indica que se trabaja con pv4
@@ -20,6 +19,8 @@ serverPort = 51234
 cachipunSocket = skt.socket(skt.AF_INET, skt.SOCK_DGRAM)
 #-----------------CONEXION UDP CON CACHIPUN---------------------------------------#
 
+
+# Función que determina el tipo de jugada que lanza el jugador según la opción (1,2 o 3) que escoja
 def queJugadaEs(jugada):
     if jugada == 1:
         return "Papel"
@@ -28,15 +29,17 @@ def queJugadaEs(jugada):
     elif jugada == 3:
         return "Tijera"
 
+# Función que finaliza el programa cuando el cliente no quiere jugar más
 def terminarPrograma():
     cachipunSocket.sendto('STOP'.encode(), (serverAddr, serverPort))
     msg, addr = cachipunSocket.recvfrom(2048)
     print(msg.decode())
     clientSocket.send('0'.encode())
 
+# Función que solicita una partida, enviando desde el intermediario al servidor Cachipun
 def solicitarJugar():
     print("Solicitando a servidor cachipun jugar una partida")
-    cachipunSocket.sendto('Oye wn, quieren jugar, queri?'.encode(), (serverAddr, serverPort))
+    cachipunSocket.sendto('Cliente solicita partida. ¿Quieres jugar?'.encode(), (serverAddr, serverPort))
     respuestaCachipun, addr = cachipunSocket.recvfrom(2048)
     if (respuestaCachipun.decode() == "0"): #cachipun no quiere jugar
         return "No"
@@ -44,17 +47,18 @@ def solicitarJugar():
         puerto_nuevo = int(respuestaCachipun.decode())
         return puerto_nuevo #retorna puerto nuevo donde se jugará cachipun
 
+# Función que solicita una partida, enviando desde el intermediario al servidor Cachipun
 def solicitarJugadaACachipun(puerto):
     cachipunSocket.sendto('Tira tu jugada'.encode(), (serverAddr, puerto))
     jugada_cachipun, addr = cachipunSocket.recvfrom(2048)
     return jugada_cachipun
 
+# Función donde se realiza y se ejecuta toda la lógica del juego 
 def jugarCachipun(puerto):
 
     #-----------------CONEXION UDP CON CACHIPUN---------------------------------------#
     serverAddr = 'localhost'
     serverPort = puerto 
-    # cachipunSocket = skt.socket(skt.AF_INET, skt.SOCK_DGRAM)
     #-----------------CONEXION UDP CON CACHIPUN---------------------------------------#
 
     puntaje_cliente = 0

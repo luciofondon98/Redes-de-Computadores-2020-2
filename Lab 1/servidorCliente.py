@@ -8,6 +8,7 @@ socketCliente.connect((serverAddr,puertoServidor)) #Cliente realiza el Handshake
 
 #-----------------CONEXION TCP CON INTERMEDIARIO---------------------------------------#
 
+# Función que va pidiendo la jugada al cliente y la envía al servidor intermediario
 def jugarCachipun():
     while(1):
         while(1):
